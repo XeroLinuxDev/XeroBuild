@@ -69,7 +69,7 @@ if [ $result = "none" ];
 		#remove qemu
 		if pacman -Qi qemu-guest-agent &> /dev/null; then
 			systemctl disable qemu-guest-agent.service
-			pacman -Rns qemu-guest-agent --noconfirm
+			pacman -Rns qemu-guest-agent spice-vdagent --noconfirm
 			echo "Removed qemu-guest-agent"
 		fi
 fi
