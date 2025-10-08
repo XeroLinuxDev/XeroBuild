@@ -22,7 +22,7 @@ In case you use **GTK4/LibAdwaita** apps, you will have to Launch the toolkit fr
 
 ### Support / Issues
 
-Distro support and/or feature requests is currently only available to those of you who have donated €10 or more. If you have please join my [**Discord**](https://discord.gg/5sqxTSuKZu) then DM me so I can give you access to the private support channel. 
+Distro support and/or feature requests is currently only available to those of you who have donated €15 or more. If you have please join my [**Discord**](https://discord.gg/5sqxTSuKZu) then DM me so I can give you access to the private support channel. 
 
 As for issues, please report them either on Discord (linked above) or here on [**Issues Page**](https://github.com/XeroLinuxDev/xero-build/issues) and I will get to them as soon as I can. 
 
