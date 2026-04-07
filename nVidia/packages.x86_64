@@ -475,12 +475,6 @@ appstream-qt
 pacman-contrib
 pacman-bintrans
 
-### Xero Extras
-
-phpgui
-efibootmgrgui
-xero-wallpaper-browser
-
 #######################################################
 ###                  Libraries                      ###
 #######################################################
