@@ -7,7 +7,6 @@
 base
 archiso
 base-devel
-b43-fwcutter
 
 ### FS Tools
 
@@ -40,10 +39,7 @@ usbmuxd
 usbutils
 testdisk
 ddrescue
-partclone
-partimage
 clonezilla
-open-iscsi
 memtest86+-efi
 usb_modeswitch
 
@@ -74,16 +70,12 @@ sudo
 tldr
 nmap
 ocrad
-irssi
 mdadm
-wvdial
 hyperv
 mtools
 lsscsi
-ndisc6
 screen
 man-db
-xl2tpd
 tcpdump
 ethtool
 xdotool
@@ -248,27 +240,17 @@ xf86-input-elographics
 gstreamer
 gst-libav
 gst-plugin-va
-gst-plugin-aws
-gst-plugin-cdg
 gst-plugin-gif
 gst-plugin-gtk
 gst-plugin-hip
-gst-plugin-hsv
 gst-plugin-qsv
-gst-plugin-wpe
-gst-plugin-burn
 gst-plugin-ffv1
 gst-plugin-gtk4
-gst-plugin-json
 gst-plugin-msdk
-gst-plugin-onnx
 gst-plugin-qml6
-gst-plugin-skia
-gst-plugin-wpe2
 gst-plugins-bad
 gst-plugin-dav1d
 gst-plugin-qmlgl
-gst-plugin-quinn
 gst-plugin-rav1e
 gst-plugin-regex
 gst-plugin-rsflv
@@ -278,24 +260,10 @@ gst-plugins-base
 gst-plugins-good
 gst-plugins-ugly
 gst-plugin-claxon
-gst-plugin-csound
-gst-plugin-demucs
-gst-plugin-lewton
 gst-plugin-opencv
-gst-plugin-rsfile
 gst-plugin-rsrtsp
-gst-plugin-rswebp
-gst-plugin-sodium
-gst-plugin-icecast
 gst-plugin-isobmff
-gst-plugin-raptorq
-gst-plugin-reqwest
-gst-plugin-rsinter
-gst-plugin-rsonvif
-gst-plugin-spotify
-gst-plugin-whisper
 gst-plugins-espeak
-gst-plugin-deepgram
 gst-plugin-hlssink3
 gst-plugin-livesync
 gst-plugin-pipewire
@@ -304,26 +272,16 @@ gst-plugin-textwrap
 gst-plugin-gopbuffer
 gst-plugin-libcamera
 gst-plugin-rsaudiofx
-gst-plugin-rstracers
 gst-plugin-rsvideofx
 gst-plugin-textahead
-gst-plugin-elevenlabs
-gst-plugin-mpegtslive
 gst-plugin-webrtchttp
-gst-plugin-rsanalytics
 gst-plugin-threadshare
-gst-plugin-speechmatics
 gst-plugin-togglerecord
-gst-plugin-streamgrouper
 gst-plugin-fallbackswitch
-gst-plugin-originalbuffer
 gst-plugin-rsaudioparsers
 gst-plugin-textaccumulate
 gst-plugin-uriplaylistbin
 gst-plugin-rsclosedcaption
-gst-webrtc-signalling-server
-gst-plugin-hlsmultivariantsink
-gst-plugin-debugseimetainserter
 
 ## Pipewire Audio
 
@@ -365,15 +323,11 @@ nss-mdns
 smbclient
 net-tools
 openresolv
-darkhttpd
 reflector
-pptpclient
-cloud-init
 openconnect
 traceroute
 rtw89-dkms-git
 networkmanager
-nm-cloud-setup
 wireless-regdb
 wireless_tools
 wpa_supplicant
@@ -521,7 +475,6 @@ yt-dlp
 wavpack
 unarchiver
 rate-mirrors
-gnustep-base
 
 ## Complements
 
@@ -614,7 +567,6 @@ plasma-browser-integration
 krdc
 krfb
 smb4k
-alligator
 kdeconnect
 kio-admin
 kio-extras
