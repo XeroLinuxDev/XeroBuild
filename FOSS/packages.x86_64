@@ -326,7 +326,6 @@ openresolv
 reflector
 openconnect
 traceroute
-rtw89-dkms-git
 networkmanager
 wireless-regdb
 wireless_tools
@@ -429,7 +428,6 @@ gvfs-smb
 gvfs-goa
 gvfs-wsdd
 gvfs-dnssd
-gvfs-google
 gvfs-gphoto2
 gvfs-onedrive
 
