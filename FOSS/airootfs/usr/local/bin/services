@@ -10,8 +10,8 @@ chmod -v 750 /root
 
 echo "Creds Crap Disable"
 echo "##################"
-systemctl disable systemd-userdb-load-credentials.service systemd-userdbd.service systemd-userdbd.socket
-systemctl mask systemd-userdb-load-credentials.service systemd-userdbd.service systemd-userdbd.socket
+systemctl disable systemd-userdb-load-credentials.service systemd-userdbd.service systemd-userdbd.socket 2>/dev/null || true
+systemctl mask systemd-userdb-load-credentials.service systemd-userdbd.service systemd-userdbd.socket 2>/dev/null || true
 
 echo "Bluetooth improvements"
 echo "######################"

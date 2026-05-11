@@ -16,7 +16,7 @@ elif [[ "$current_line" =~ ^MODULES=\(\)$ ]]; then
 else
     # Only add missing modules
     for mod in "${REQUIRED_MODULES[@]}"; do
-        if ! grep -q "$mod" /etc/mkinitcpio.conf; then
+        if ! grep -qP "\b${mod}\b" /etc/mkinitcpio.conf; then
             sed -i "/^MODULES=(/ s/)$/ $mod)/" /etc/mkinitcpio.conf
         fi
     done

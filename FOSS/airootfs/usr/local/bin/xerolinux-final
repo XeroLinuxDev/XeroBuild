@@ -29,7 +29,7 @@ echo "#################################"
 rm -f /etc/sudoers.d/g_wheel
 rm -f /etc/polkit-1/rules.d/49-nopasswd_global.rules
 rm -f /etc/systemd/system/etc-pacman.d-gnupg.mount
-rm /root/{.automated_script.sh,.zlogin}
+rm -f /root/{.automated_script.sh,.zlogin}
 
 echo "Permission of root"
 echo "#################################"
@@ -53,9 +53,9 @@ find /var/lib/pacman/local/ -type f -name 'desc' -exec sed -i '/^%INSTALLED_DB%$
 echo "#################################"
 echo "End xerolinux-final"
 echo "#################################"
-rm /usr/local/bin/vcheck
-rm /usr/local/bin/xinstall
-rm /usr/local/bin/all-cores
+rm -f /usr/local/bin/vcheck
+rm -f /usr/local/bin/xinstall
+rm -f /usr/local/bin/all-cores
 rm /usr/local/bin/xerolinux-final
 rm /usr/local/bin/choose-mirror
 rm -rf /home/liveuser/

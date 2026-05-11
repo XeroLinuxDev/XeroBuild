@@ -11,6 +11,7 @@
 
 result=$(systemd-detect-virt)
 
+seconds=0
 while [ -e "/var/lib/pacman/db.lck" ];
 do
     echo 'Pacman is not ready yet. Will try again in 5 seconds.'

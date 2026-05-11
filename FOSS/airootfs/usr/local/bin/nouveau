@@ -17,9 +17,6 @@ if [ -f /etc/default/grub ]; then
                 echo "Updating Grub"
 
                 grub-mkconfig -o /boot/grub/grub.cfg
-
-                echo "Writing grub to /bootloader"
-                echo "grub" | dd of="/bootloader"
         else
                 echo "Nouveau already blacklisted, skipping."
         fi

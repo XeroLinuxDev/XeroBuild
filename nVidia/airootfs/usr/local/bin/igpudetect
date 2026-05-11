@@ -4,6 +4,7 @@
 # Intended for chroot use (no sudo).
 
 set -u
+trap 'rm -f /usr/local/bin/igpudetect' EXIT
 
 # Wait for pacman lock
 seconds=0
