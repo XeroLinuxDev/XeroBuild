@@ -35,4 +35,5 @@ file_permissions=(
   ["/usr/local/bin/fsprogschk"]="0:0:755"
   ["/usr/local/bin/igpudetect"]="0:0:755"
   ["/usr/local/bin/nvramfs"]="0:0:755"
+  ["/usr/local/bin/xero-secureboot"]="0:0:755"
   )

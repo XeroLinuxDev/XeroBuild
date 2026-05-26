@@ -12,3 +12,5 @@ for dir in /home/*/; do
 done
 
 rm /usr/local/bin/skel
+
+exit 0

@@ -1,5 +1,4 @@
 #!/bin/bash
-#set -e
 ###############################################################################
 # Author	:	DarkXero
 # Website	:	https://xerolinux.xyz
@@ -31,3 +30,5 @@ else
 fi
 
 rm /usr/local/bin/ucode
+
+exit 0

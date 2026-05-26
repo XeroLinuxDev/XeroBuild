@@ -13,11 +13,18 @@ echo "##################"
 systemctl disable systemd-userdb-load-credentials.service systemd-userdbd.service systemd-userdbd.socket 2>/dev/null || true
 systemctl mask systemd-userdb-load-credentials.service systemd-userdbd.service systemd-userdbd.socket 2>/dev/null || true
 
+echo "Fix sshd for installed system"
+echo "#############################"
+rm -f /etc/ssh/ssh_host_*
+rm -f /etc/ssh/sshd_config.d/10-archiso.conf
+
 echo "Bluetooth improvements"
 echo "######################"
-sed -i "s/#AutoEnable=false/AutoEnable=true/g" /etc/bluetooth/main.conf
+sed -i "s/^#AutoEnable=.*/AutoEnable=true/" /etc/bluetooth/main.conf
 
 echo "############"
 echo "End services"
 echo "############"
 rm /usr/local/bin/services
+
+exit 0

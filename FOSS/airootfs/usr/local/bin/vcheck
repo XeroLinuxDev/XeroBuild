@@ -1,19 +1,13 @@
 #!/bin/bash
-#set -e
 ###############################################################################
-# Author	:	DarkXero
-# Website	:	https://xerolinux.xyz
-###############################################################################
-#
-#   DO NOT JUST RUN THIS. EXAMINE AND JUDGE. RUN AT YOUR OWN RISK.
-#
+# Author    :   DarkXero
+# Website   :   https://xerolinux.xyz
 ###############################################################################
 
 result=$(systemd-detect-virt)
 
 seconds=0
-while [ -e "/var/lib/pacman/db.lck" ];
-do
+while [ -e "/var/lib/pacman/db.lck" ]; do
     echo 'Pacman is not ready yet. Will try again in 5 seconds.'
     seconds=$(($seconds + 5))
     sleep 5
@@ -23,53 +17,45 @@ do
     fi
 done
 
-echo "You are working on "$result
+echo "You are working on $result"
 
-if [ $result = "oracle" ];
-	then
-
-		#remove qemu
-		if pacman -Qi qemu-guest-agent &> /dev/null; then
-			pacman -Rns qemu-guest-agent qemu-common qemu-hw-display-qxl qemu-ui-opengl qemu-ui-spice-core --noconfirm
-			echo "Removed qemu-guest-agent"
-		fi
+if [ "$result" = "oracle" ]; then
+    if pacman -Qi qemu-guest-agent &> /dev/null; then
+        pacman -Rns qemu-guest-agent qemu-common qemu-hw-display-qxl qemu-ui-opengl qemu-ui-spice-core --noconfirm
+        echo "Removed qemu-guest-agent"
+    fi
 fi
 
-if [ $result = "kvm" ];
-	then
-
-		#remove virtualbox
-		if pacman -Qi virtualbox-guest-utils &> /dev/null; then
-			systemctl disable vboxservice.service
-			pacman -Rns virtualbox-guest-utils --noconfirm
-			echo "Removed virtualbox-guest-utils"
-		fi
-		if pacman -Qi virtualbox-guest-utils-nox &> /dev/null; then
-			systemctl disable vboxservice.service
-			pacman -Rns virtualbox-guest-utils-nox --noconfirm
-			echo "Removed virtualbox-guest-utils-nox"
-		fi
+if [ "$result" = "kvm" ]; then
+    if pacman -Qi virtualbox-guest-utils &> /dev/null; then
+        systemctl disable vboxservice.service
+        pacman -Rns virtualbox-guest-utils --noconfirm
+        echo "Removed virtualbox-guest-utils"
+    fi
+    if pacman -Qi virtualbox-guest-utils-nox &> /dev/null; then
+        systemctl disable vboxservice.service
+        pacman -Rns virtualbox-guest-utils-nox --noconfirm
+        echo "Removed virtualbox-guest-utils-nox"
+    fi
 fi
 
-if [ $result = "none" ];
-	then
-		#remove virtualbox
-		if pacman -Qi virtualbox-guest-utils &> /dev/null; then
-			systemctl disable vboxservice.service
-			pacman -Rns virtualbox-guest-utils --noconfirm
-			echo "Removed virtualbox-guest-utils"
-		fi
-
-		if pacman -Qi virtualbox-guest-utils-nox &> /dev/null; then
-			systemctl disable vboxservice.service
-			pacman -Rns virtualbox-guest-utils-nox --noconfirm
-			echo "Removed virtualbox-guest-utils-nox"
-		fi
-
-		#remove qemu
-		if pacman -Qi qemu-guest-agent &> /dev/null; then
-			systemctl disable qemu-guest-agent.service
-			pacman -Rns qemu-guest-agent spice-vdagent --noconfirm
-			echo "Removed qemu-guest-agent"
-		fi
+if [ "$result" = "none" ]; then
+    if pacman -Qi virtualbox-guest-utils &> /dev/null; then
+        systemctl disable vboxservice.service
+        pacman -Rns virtualbox-guest-utils --noconfirm
+        echo "Removed virtualbox-guest-utils"
+    fi
+    if pacman -Qi virtualbox-guest-utils-nox &> /dev/null; then
+        systemctl disable vboxservice.service
+        pacman -Rns virtualbox-guest-utils-nox --noconfirm
+        echo "Removed virtualbox-guest-utils-nox"
+    fi
+    if pacman -Qi qemu-guest-agent &> /dev/null; then
+        systemctl disable qemu-guest-agent.service
+        pacman -Rns qemu-guest-agent spice-vdagent --noconfirm
+        echo "Removed qemu-guest-agent"
+    fi
 fi
+
+rm -f /usr/local/bin/vcheck
+exit 0

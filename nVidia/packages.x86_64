@@ -46,6 +46,7 @@ usb_modeswitch
 ### Terminal
 
 fd
+tk
 nano
 tmux
 brltty
@@ -71,11 +72,14 @@ tldr
 nmap
 ocrad
 mdadm
+sakura
 hyperv
 mtools
 lsscsi
 screen
 man-db
+kseexpr
+rtaudio
 tcpdump
 ethtool
 xdotool
@@ -91,6 +95,7 @@ dmidecode
 efibootmgr
 sequoia-sq
 edk2-shell
+libmypaint
 python-pyqt6
 sof-firmware
 libusb-compat
@@ -143,10 +148,13 @@ calamaresx-nv-cfg
 
 ### Build Stuff
 
+xmlto
 boost
 ckbcomp
 kpmcore
+yaml-cpp
 boost-libs
+gtk-update-icon-cache
 xdg-terminal-exec-git
 
 ### mkinitcpio stuff
@@ -186,11 +194,8 @@ xorg-xwayland
 
 ### Essentials
 
-xmlto
-yaml-cpp
 kirigami
 polkit-gnome
-gtk-update-icon-cache
 
 #######################################################
 ###                  Hardware                       ###
@@ -257,7 +262,6 @@ xf86-input-elographics
 gstreamer
 gst-libav
 gst-plugin-va
-gst-plugin-aws
 gst-plugin-gif
 gst-plugin-gtk
 gst-plugin-hip
@@ -281,7 +285,6 @@ gst-plugin-claxon
 gst-plugin-opencv
 gst-plugin-rsrtsp
 gst-plugin-isobmff
-gst-plugin-whisper
 gst-plugins-espeak
 gst-plugin-hlssink3
 gst-plugin-livesync
@@ -357,7 +360,6 @@ linux-firmware-intel
 ### Virtual Machine
 
 spice-vdagent
-open-vm-tools
 qemu-guest-agent
 virtualbox-guest-utils
 
@@ -478,7 +480,6 @@ python-websockets
 
 ### Essentials
 
-#sddm
 xdg-user-dirs
 plasma-login-manager
 
@@ -537,7 +538,6 @@ drkonqi
 kwrited
 kgamma
 kscreen
-#sddm-kcm
 #kwin-x11
 kmenuedit
 bluedevil
@@ -695,7 +695,6 @@ vnstat
 nodejs
 cronie
 hwinfo
-arandr
 assimp
 netpbm
 wmctrl

@@ -24,3 +24,5 @@ if [ -f /etc/default/grub ]; then
 fi
 
 rm /usr/local/bin/nouveau
+
+exit 0

@@ -46,6 +46,7 @@ usb_modeswitch
 ### Terminal
 
 fd
+tk
 nano
 tmux
 brltty
@@ -71,11 +72,14 @@ tldr
 nmap
 ocrad
 mdadm
+sakura
 hyperv
 mtools
 lsscsi
 screen
 man-db
+kseexpr
+rtaudio
 tcpdump
 ethtool
 xdotool
@@ -91,6 +95,7 @@ dmidecode
 efibootmgr
 sequoia-sq
 edk2-shell
+libmypaint
 python-pyqt6
 sof-firmware
 libusb-compat
@@ -458,7 +463,6 @@ python-websockets
 
 ### Essentials
 
-#sddm
 xdg-user-dirs
 plasma-login-manager
 
@@ -517,7 +521,6 @@ drkonqi
 kwrited
 kgamma
 kscreen
-#sddm-kcm
 #kwin-x11
 kmenuedit
 bluedevil
@@ -675,7 +678,6 @@ vnstat
 nodejs
 cronie
 hwinfo
-arandr
 assimp
 netpbm
 wmctrl

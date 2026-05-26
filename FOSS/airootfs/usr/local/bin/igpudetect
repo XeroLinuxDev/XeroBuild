@@ -3,7 +3,6 @@
 # Hybrid systems (Intel + AMD) -> keep both (do nothing).
 # Intended for chroot use (no sudo).
 
-set -u
 trap 'rm -f /usr/local/bin/igpudetect' EXIT
 
 # Wait for pacman lock
@@ -21,8 +20,8 @@ done
 # Dependencies check
 if ! command -v lspci >/dev/null 2>&1; then
   echo
-  echo "❌ lspci not found. Install pciutils first."
-  exit 1
+  echo "lspci not found — skipping iGPU detection."
+  exit 0
 fi
 
 # Collect GPU vendors from display-class devices

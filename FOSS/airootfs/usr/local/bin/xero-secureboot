@@ -1,0 +1,259 @@
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+###############################################################################
+# Author  : DarkXero
+# Website : https://xerolinux.xyz
+# Run on installed system to set up Secure Boot with sbctl + GRUB
+###############################################################################
+
+if [[ $EUID -ne 0 ]]; then
+    echo -e "${RED}Run as root: sudo xero-secureboot${NC}"
+    exit 1
+fi
+
+echo
+echo -e "${BLUE}##############################################${NC}"
+echo -e "${BLUE}      XeroLinux Secure Boot Setup            ${NC}"
+echo -e "${BLUE}##############################################${NC}"
+echo
+
+# UEFI check
+if [[ ! -d /sys/firmware/efi ]]; then
+    echo -e "${RED}Not booted in UEFI mode. Secure Boot unavailable.${NC}"
+    exit 1
+fi
+
+# Install sbctl if missing
+if ! command -v sbctl &>/dev/null; then
+    echo "Installing sbctl..."
+    pacman -S --noconfirm sbctl
+fi
+
+# Check current state
+sbctl_status=$(sbctl status 2>/dev/null)
+
+# Helper: check Setup Mode via sbctl output AND direct EFI variable fallback
+_in_setup_mode() {
+    echo "$sbctl_status" | grep -q "Setup Mode:.*Enabled" && return 0
+    local var="/sys/firmware/efi/efivars/SetupMode-8be4df61-93ca-11d2-aa0d-00e098032b8c"
+    [[ -f "$var" ]] && [[ "$(od -An -j4 -N1 -tu1 "$var" 2>/dev/null | tr -d ' \n')" == "1" ]]
+}
+
+# Helper: check if keys are actually enrolled in UEFI
+# "Installed: ✓" only means local sbctl database exists — NOT UEFI enrollment
+# Setup Mode exits ONLY when PK is written to UEFI — that's the real signal
+_keys_enrolled() {
+    echo "$sbctl_status" | grep -q "Setup Mode:.*Disabled"
+}
+
+# Already fully set up
+if echo "$sbctl_status" | grep -q "Secure Boot.*Enabled"; then
+    echo -e "${GREEN}Secure Boot is already active.${NC}"
+    echo "Re-signing EFI binaries..."
+    sbctl sign-all
+    echo -e "${GREEN}Done.${NC}"
+    exit 0
+fi
+
+# Keys enrolled but Secure Boot not yet enabled in UEFI
+if _keys_enrolled; then
+    echo -e "${YELLOW}Keys enrolled but Secure Boot not yet enabled in UEFI.${NC}"
+    echo
+    echo "Re-signing EFI binaries and exiting..."
+    sbctl sign-all
+    echo
+    echo "Reboot → enter UEFI firmware → enable Secure Boot → save."
+    echo -e "Tip: ${BLUE}systemctl reboot --firmware-setup${NC}"
+    echo
+    exit 0
+fi
+
+# Setup Mode not active — user hasn't prepared UEFI yet
+if ! _in_setup_mode; then
+    echo -e "${YELLOW}Setup Mode is NOT active.${NC}"
+    echo
+    echo "Current sbctl status:"
+    echo "$sbctl_status"
+    echo
+    echo -e "${YELLOW}Note: 'sbctl is not installed' means the signing database is not yet${NC}"
+    echo -e "${YELLOW}initialized — the sbctl binary IS present. This is expected at this stage.${NC}"
+    echo
+    echo "Before running this script, do the following:"
+    echo
+    echo "  1. Reboot into UEFI firmware settings"
+    echo "     Tip: systemctl reboot --firmware-setup"
+    echo
+    echo "  2. Find Secure Boot settings and DELETE ALL KEYS"
+    echo "     This includes: PK, KEK, db, and dbx"
+    echo "     Setup Mode only activates when ALL keys are cleared."
+    echo "     Simply toggling 'Setup Mode' without deleting keys won't work."
+    echo
+    echo "     Lenovo  : Security → Secure Boot → Reset to Setup Mode"
+    echo "     MSI     : Boot → Secure Boot → Custom → Key Mgmt → delete all"
+    echo "     ASUS    : Boot → Secure Boot → Custom → Key Mgmt → delete all"
+    echo "     Gigabyte: Boot → Secure Boot → Key Management → delete all"
+    echo "     Other   : Look for 'Clear Secure Boot Keys' or 'Delete All Keys'"
+    echo
+    echo -e "  ${RED}IMPORTANT: Some UEFI firmware auto-restores Microsoft keys on reboot.${NC}"
+    echo "  If you keep seeing this message after clearing keys, look for an"
+    echo "  option called 'Restore Factory Keys' or 'Reset to Setup Mode' and"
+    echo "  use that INSTEAD of manually deleting keys."
+    echo
+    echo "  3. Save changes and reboot back into XeroLinux"
+    echo
+    echo "  4. Run this script again as root"
+    echo
+    exit 0
+fi
+
+echo -e "${GREEN}Setup Mode active. Proceeding with Secure Boot setup...${NC}"
+echo
+
+# Detect EFI partition mount point
+efi_dir=""
+for d in /boot/efi /efi /boot; do
+    if [[ -d "$d/EFI" ]] && mountpoint -q "$d" 2>/dev/null; then
+        efi_dir="$d"
+        break
+    fi
+done
+
+# Fallback: just find the EFI dir without mountpoint check
+if [[ -z "$efi_dir" ]]; then
+    for d in /boot/efi /efi /boot; do
+        if [[ -d "$d/EFI" ]]; then
+            efi_dir="$d"
+            break
+        fi
+    done
+fi
+
+if [[ -z "$efi_dir" ]]; then
+    echo -e "${RED}Could not detect EFI partition. Is it mounted?${NC}"
+    exit 1
+fi
+
+echo "EFI directory : $efi_dir"
+echo
+
+# Re-install GRUB with all needed modules compiled into the EFI binary.
+# In Secure Boot lockdown mode GRUB cannot load .mod files from disk — any
+# module not compiled in causes "verification requested but nobody cares" and
+# drops to rescue shell. Compiling them in avoids all disk-based module loads.
+# Only include modules that actually exist in this GRUB installation.
+echo "Re-installing GRUB with Secure Boot support..."
+_grub_mod_dir="/usr/lib/grub/x86_64-efi"
+_wanted="tpm normal boot linux linuxefi multiboot2 configfile
+         search search_label search_fs_file search_fs_uuid ls
+         part_gpt part_msdos fat ext2 btrfs xfs lvm
+         echo test loadenv gzio
+         efi_gop efi_uga all_video gfxterm gfxterm_background gfxterm_menu gfxmenu
+         luks luks2 cryptodisk gcry_rijndael gcry_sha256 gcry_sha512"
+_modules=""
+for _mod in $_wanted; do
+    [[ -f "$_grub_mod_dir/${_mod}.mod" ]] && _modules="$_modules $_mod"
+done
+_modules="${_modules# }"
+echo "Modules to embed: $_modules"
+echo
+if ! grub-install \
+    --target=x86_64-efi \
+    --efi-directory="$efi_dir" \
+    --bootloader-id=XeroLinux \
+    --modules="$_modules" \
+    --disable-shim-lock; then
+    echo -e "${RED}grub-install failed. Check errors above and retry.${NC}"
+    exit 1
+fi
+echo
+
+# Create Secure Boot keys
+echo "Creating Secure Boot keys..."
+if ! sbctl create-keys; then
+    echo -e "${RED}sbctl create-keys failed.${NC}"
+    exit 1
+fi
+echo
+
+# Enroll keys
+# --firmware-builtin reads dbDefault EFI variable (OEM built-in keys) — only exists on real hardware
+# ASUS: --firmware-builtin causes duplicate EFI key entries → brick on boot
+# VM/OVMF: dbDefault variable doesn't exist → enroll-keys fails
+board_vendor=$(cat /sys/class/dmi/id/board_vendor 2>/dev/null || true)
+db_default="/sys/firmware/efi/efivars/dbDefault-8be4df61-93ca-11d2-aa0d-00e098032b8c"
+if [[ "$board_vendor" == *"ASUSTeK"* || "$board_vendor" == *"ASUS"* ]]; then
+    echo "ASUS board detected — skipping --firmware-builtin to avoid key conflicts"
+    enroll_cmd=(sbctl enroll-keys --microsoft)
+elif [[ ! -f "$db_default" ]]; then
+    echo "No built-in firmware keys found — skipping --firmware-builtin"
+    enroll_cmd=(sbctl enroll-keys --microsoft)
+else
+    enroll_cmd=(sbctl enroll-keys --microsoft --firmware-builtin)
+fi
+if ! "${enroll_cmd[@]}"; then
+    echo -e "${RED}sbctl enroll-keys failed — keys NOT written to UEFI.${NC}"
+    echo "Cleaning up local key database so next run starts fresh..."
+    rm -rf /usr/share/secureboot
+    exit 1
+fi
+
+# Verify PK actually landed in UEFI — Setup Mode must exit after successful enrollment
+post_enroll=$(sbctl status 2>/dev/null)
+if echo "$post_enroll" | grep -q "Setup Mode:.*Enabled"; then
+    echo -e "${RED}Enrollment returned success but Setup Mode still active.${NC}"
+    echo "EFI variable write did not persist — possible VM or firmware limitation."
+    echo "Cleaning up local key database..."
+    rm -rf /usr/share/secureboot
+    exit 1
+fi
+echo
+
+# Sign all EFI binaries found under the EFI partition (-s saves to sbctl DB)
+echo "Signing EFI binaries..."
+while IFS= read -r efi_file; do
+    echo "  Signing: $efi_file"
+    sbctl sign -s "$efi_file"
+done < <(find "$efi_dir" -name "*.efi" 2>/dev/null)
+
+# Sign kernels — required because Arch GRUB detects Secure Boot via EFI vars
+# and enforces lockdown mode regardless of --disable-shim-lock, refusing to
+# load unsigned kernels. Signing them satisfies GRUB's lockdown verifier.
+echo "Signing kernels..."
+for kernel in /boot/vmlinuz-*; do
+    [[ -f "$kernel" ]] || continue
+    echo "  Signing: $kernel"
+    sbctl sign -s "$kernel"
+done
+echo
+
+# Re-sign anything already in sbctl DB (catches missed files on re-runs)
+echo "Re-signing all tracked files..."
+sbctl sign-all
+echo
+
+echo "Verifying signatures..."
+sbctl verify
+echo
+
+echo -e "${GREEN}##############################################${NC}"
+echo -e "${GREEN}   Secure Boot setup complete!               ${NC}"
+echo -e "${GREEN}##############################################${NC}"
+echo
+echo "Next steps:"
+echo "  1. Reboot into UEFI firmware settings"
+echo "  2. Enable Secure Boot"
+echo "  3. Save and boot normally"
+echo
+echo -e "Tip: ${BLUE}systemctl reboot --firmware-setup${NC}"
+echo
+echo "Note: sbctl pacman hook will auto-sign EFI binaries on future"
+echo "kernel and bootloader updates."
+echo
+
+exit 0

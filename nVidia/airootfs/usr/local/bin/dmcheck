@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#set -e
 ###############################################################################
 # Author	:	DarkXero
 # Website	:	https://www.xerolinux.online
@@ -11,11 +10,11 @@
 
 if pacman -Qs plasma-login-manager > /dev/null ; then
   ln -sf /usr/lib/systemd/system/plasmalogin.service /etc/systemd/system/display-manager.service
-elif pacman -Qs sddm > /dev/null ; then
-  ln -sf /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service
 fi
 
 echo "#################################"
 echo "End displaymanager-check"
 echo "#################################"
 rm /usr/local/bin/dmcheck
+
+exit 0

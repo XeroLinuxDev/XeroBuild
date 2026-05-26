@@ -44,8 +44,6 @@ if [ -f /etc/default/grub ];then
 
         grub-mkconfig -o /boot/grub/grub.cfg
 
-        echo "Writing grub to /bootloader"
-        echo "grub" | dd of="/bootloader"
 
 fi
 
@@ -93,3 +91,5 @@ EOF
 fi
 
 rm /usr/local/bin/nvramfs
+
+exit 0

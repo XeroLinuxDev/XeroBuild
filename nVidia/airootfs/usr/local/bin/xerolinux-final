@@ -13,15 +13,11 @@ chgrp polkitd /etc/polkit-1/rules.d
 echo "Copy /etc/skel to /root"
 echo "#################################"
 cp -aT /etc/skel/ /root/
-cp /usr/share/applications/xero-toolkit.desktop /etc/xdg/autostart/
+[[ -f /usr/share/applications/xero-toolkit.desktop ]] && cp /usr/share/applications/xero-toolkit.desktop /etc/xdg/autostart/
 
 echo "Cleanup autologin root"
 echo "#################################"
 rm -rf /etc/systemd/system/getty@tty1.service.d
-
-echo "Setting editor to nano"
-echo "#################################"
-echo "EDITOR=nano" >> /etc/profile
 
 #Original cleanup
 echo "Cleanup original files"
@@ -41,11 +37,6 @@ sed -i "s/#RebootWatchdogSec=10min/RebootWatchdogSec=30s/g" /etc/systemd/system.
 sed -i "s/#DefaultTimeoutStopSec=90s/DefaultTimeoutStopSec=5s/g" /etc/systemd/system.conf
 sed -i "s/#DefaultTimeoutStartSec=90s/DefaultTimeoutStartSec=10s/g" /etc/systemd/system.conf
 
-echo "Fixing SDDM.conf User"
-echo "#####################"
-sed -i 's/User=liveuser/User=/g' /etc/sddm.conf.d/kde_settings.conf
-sed -i 's/Session=plasmax11/Session=plasma/g' /etc/sddm.conf.d/kde_settings.conf
-
 echo "Fixing Pacman DB Issue"
 echo "######################"
 find /var/lib/pacman/local/ -type f -name 'desc' -exec sed -i '/^%INSTALLED_DB%$/,+2d' {} +
@@ -59,3 +50,5 @@ rm -f /usr/local/bin/all-cores
 rm -f /usr/local/bin/choose-mirror
 rm /usr/local/bin/xerolinux-final
 rm -rf /home/liveuser/
+
+exit 0

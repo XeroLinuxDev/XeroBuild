@@ -1,9 +1,20 @@
 #!/bin/bash
-#set -e
 ###############################################################################
 # Author	:	DarkXero
 # Website	:	https://xerolinux.xyz
 ###############################################################################
+
+# Wait for pacman lock
+seconds=0
+while [ -e "/var/lib/pacman/db.lck" ]; do
+    echo 'Pacman is not ready yet. Will try again in 5 seconds.'
+    seconds=$(($seconds + 5))
+    sleep 5
+    if [[ "$seconds" == "30" ]]; then
+        echo 'Warning: removing pacman db.lck!'
+        rm /var/lib/pacman/db.lck
+    fi
+done
 
 cpu_vendor=$(awk '/vendor_id/ {print $3; exit}' /proc/cpuinfo)
 
@@ -19,3 +30,5 @@ else
 fi
 
 rm /usr/local/bin/ucode
+
+exit 0

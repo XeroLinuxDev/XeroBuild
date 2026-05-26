@@ -1,5 +1,4 @@
 #!/bin/bash
-#set -e
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -25,8 +24,8 @@ done
 
 HAS_BTRFS=0
 HAS_XFS=0
-lsblk -f | grep -q "btrfs" && HAS_BTRFS=1
-lsblk -f | grep -q "xfs" && HAS_XFS=1
+if findmnt -R / -t btrfs -n &>/dev/null; then HAS_BTRFS=1; fi
+if findmnt -R / -t xfs -n &>/dev/null; then HAS_XFS=1; fi
 
 if [[ $HAS_BTRFS -eq 1 && $HAS_XFS -eq 1 ]]; then
     echo -e "${GREEN}Both BTRFS and XFS partitions found. Keeping both Progs.${NC}"
@@ -42,3 +41,5 @@ else
 fi
 
 rm /usr/local/bin/fsprogschk
+
+exit 0
