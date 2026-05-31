@@ -22,9 +22,6 @@ else
     done
 fi
 
-        echo "Rebuilding mkinitcpio"
-        mkinitcpio -P
-
 echo "Adding nVidia DRM to Grub"
 
 if [ -f /etc/default/grub ];then
@@ -33,10 +30,10 @@ if [ -f /etc/default/grub ];then
 
         if grep -q "^GRUB_CMDLINE_LINUX_DEFAULT=\".*\"" /etc/default/grub; then
             # Handles double quotes
-            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/s/\"$/ nowatchdog loglevel=3 nvme_load=yes modprobe.blacklist=nouveau nvidia-drm.modeset=1\"/" /etc/default/grub
+            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/s/\"$/ nowatchdog loglevel=3 modprobe.blacklist=nouveau nvidia-drm.modeset=1\"/" /etc/default/grub
         elif grep -q "^GRUB_CMDLINE_LINUX_DEFAULT='.*'" /etc/default/grub; then
             # Handles single quotes
-            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/s/'$/ nowatchdog loglevel=3 nvme_load=yes modprobe.blacklist=nouveau nvidia-drm.modeset=1'/" /etc/default/grub
+            sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/s/'$/ nowatchdog loglevel=3 modprobe.blacklist=nouveau nvidia-drm.modeset=1'/" /etc/default/grub
         fi
         fi
 
@@ -89,6 +86,9 @@ else
 options nvidia NVreg_PreserveVideoMemoryAllocations=1
 EOF
 fi
+
+echo "Rebuilding initramfs with nVidia modules"
+timeout 240 mkinitcpio -P || timeout 120 mkinitcpio -p linux || echo "Warning: mkinitcpio failed — rerun manually after boot"
 
 rm /usr/local/bin/nvramfs
 
