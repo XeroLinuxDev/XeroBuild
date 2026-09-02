@@ -485,7 +485,6 @@ plasma-login-manager
 
 ### Others
 
-ocs-url
 xmlstarlet
 
 ## Utilities
@@ -648,7 +647,6 @@ akregator
 ### KDE Wayland
 
 waypipe
-dwayland
 egl-wayland
 qt6-wayland
 lib32-wayland
